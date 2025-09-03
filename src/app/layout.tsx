@@ -1,38 +1,32 @@
-import ThemeRegistry from "@/components/theme-registry/theme.registry";
+import { Provider } from "@/components/ui/provider";
 import NextAuthWrapper from "@/utils/next.auth.wrapper";
 import NProgressWrapper from "@/utils/nprogress.wrapper";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: "Netflix Lite",
-	description: "The peak movies",
+  title: "Netflix Lite",
+  description: "The peak movies",
 };
+
 export default function RootLayout({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-	return (
-		<html lang="en">
-			<body
-				style={{
-					minHeight: "150px",
-					backgroundImage:
-						'url("https://img.freepik.com/free-vector/modern-soft-colorful-watercolor-texture-elegant-background_1055-17362.jpg?t=st=1745764734~exp=1745768334~hmac=eb6cae79ab79180391914cd9a0ea6f5d986df707036530c9b3fdea32238c7b9e&w=826")',
-					backgroundSize: "cover",
-					backgroundPosition: "center",
-					backgroundAttachment: "fixed",
-					backgroundRepeat: "no-repeat",
-					backgroundColor: "rgba(255, 255, 255, 0.5)",
-					backgroundBlendMode: "darken",
-				}}
-			>
-				<ThemeRegistry>
-					<NProgressWrapper>
-						<NextAuthWrapper>{children}</NextAuthWrapper>
-					</NProgressWrapper>
-				</ThemeRegistry>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en">
+      <body
+        style={{
+          minHeight: "100vh",
+          backgroundColor: "#141414",
+          color: "white",
+        }}>
+        <NProgressWrapper>
+          <NextAuthWrapper>
+            <Provider>{children}</Provider>
+          </NextAuthWrapper>
+        </NProgressWrapper>
+      </body>
+    </html>
+  );
 }
