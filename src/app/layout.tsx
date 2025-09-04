@@ -1,6 +1,7 @@
 import { Provider } from "@/components/ui/provider";
-import NextAuthWrapper from "@/utils/next.auth.wrapper";
-import NProgressWrapper from "@/utils/nprogress.wrapper";
+import NextAuthWrapper from "@/lib/next.auth.wrapper";
+import NProgressWrapper from "@/lib/nprogress.wrapper";
+import { defaultSystem } from "@chakra-ui/react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
