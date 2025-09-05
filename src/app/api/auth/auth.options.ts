@@ -8,7 +8,7 @@ import { authApi } from "@/utils/api";
 
 async function refreshAccessToken(token: JWT) {
   const res = await authApi.refresh();
-  if (res.data) {
+  if (res && res.data) {
     return {
       ...token,
       access_token: res.data.accessToken ?? "",
@@ -49,25 +49,31 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-        if (!credentials?.email || !credentials.password) {
-          throw new Error("Please fill email and password !");
+        try {
+          // You need to provide your own logic here that takes the credentials
+          // submitted and returns either a object representing a user or value
+          // that is false/null if the credentials are invalid.
+          // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
+          // You can also use the `req` object to obtain additional parameters
+          // (i.e., the request IP address)
+          if (!credentials?.email || !credentials.password) {
+            throw new Error("Please fill email and password !");
+          }
+          const res = await authApi.login(
+            credentials?.email,
+            credentials?.password
+          );
+          // If no error and we have user data, return it
+          console.log("backend res: ", res);
+          if (res && res.data) {
+            return res.data as any;
+          }
+          // Return null if user data could not be retrieved
+          throw new Error(res.message as string);
+        } catch (err) {
+          console.error("Auth error:", err);
+          throw err;
         }
-        const res = await authApi.login(
-          credentials?.email,
-          credentials?.password
-        );
-        // If no error and we have user data, return it
-        if (res && res.data) {
-          return res.data as any;
-        }
-        // Return null if user data could not be retrieved
-        throw new Error(res.message as string);
       },
     }),
     GithubProvider({

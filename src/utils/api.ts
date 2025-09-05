@@ -2,6 +2,7 @@ import axios from "./axios.customize";
 
 export const authApi = {
   refresh: async (): Promise<IBackendRes<any>> => {
+    // add refresh token
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/refresh`
     );
