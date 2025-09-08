@@ -1,4 +1,5 @@
 add broadcast channel for play experience
-backend: handle oauth
 
-err backend: refresh token didn't update db when login
+backend: handle OAuth
+
+default thumbnail for genre (not upload thumbnail)
