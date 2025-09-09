@@ -13,19 +13,22 @@ import {
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { FaStar } from "react-icons/fa";
 
-const MovieCard = ({ movie, isFirst = false }) => {
+import { Content } from "@netflix-clone/types";
+
+const MovieCard = ({ movie }: { movie: Content }) => {
   const cardWidth = useBreakpointValue({
     base: "200px",
     md: "250px",
-    lg: isFirst ? "300px" : "250px",
+    lg: "289px",
   });
 
   return (
     <Box
       position="relative"
       w={cardWidth}
-      h={isFirst ? "400px" : "350px"}
+      h={"163px"}
       borderRadius="md"
       overflow="hidden"
       cursor="pointer"
@@ -36,7 +39,7 @@ const MovieCard = ({ movie, isFirst = false }) => {
       }}>
       {/* Movie Poster */}
       <Image
-        src={movie.poster}
+        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${movie.thumbnail}`}
         alt={movie.title}
         w="100%"
         h="100%"
@@ -52,15 +55,12 @@ const MovieCard = ({ movie, isFirst = false }) => {
         bg="linear-gradient(transparent, rgba(0,0,0,0.8))"
         p={4}>
         <VStack align="flex-start">
-          <Text
-            color="white"
-            fontSize={isFirst ? "lg" : "md"}
-            fontWeight="bold">
+          <Text color="white" fontSize={"md"} fontWeight="bold">
             {movie.title}
           </Text>
 
           <HStack>
-            {movie.isNew && (
+            {/* {movie.isNew && (
               <Badge bg="red.500" color="white" fontSize="xs">
                 Tập mới
               </Badge>
@@ -69,13 +69,13 @@ const MovieCard = ({ movie, isFirst = false }) => {
               <Badge bg="yellow.500" color="black" fontSize="xs">
                 TOP 10
               </Badge>
-            )}
+            )} */}
             <Badge variant="outline" colorScheme="whiteAlpha" fontSize="xs">
-              {movie.rating}
+              {movie.totalScoreRating / movie.ratingCount || 5} <FaStar />
             </Badge>
           </HStack>
 
-          {movie.hasWatchNow && (
+          {/* {movie.hasWatchNow && (
             <Button
               size="sm"
               bg="red.500"
@@ -84,12 +84,12 @@ const MovieCard = ({ movie, isFirst = false }) => {
               _hover={{ bg: "red.600" }}>
               Xem ngay
             </Button>
-          )}
+          )} */}
         </VStack>
       </Box>
 
       {/* Top 10 Badge */}
-      {movie.badge && (
+      {/* {movie.badge && (
         <Box
           position="absolute"
           top={2}
@@ -103,7 +103,7 @@ const MovieCard = ({ movie, isFirst = false }) => {
           borderRadius="sm">
           TOP {movie.topRank}
         </Box>
-      )}
+      )} */}
     </Box>
   );
 };

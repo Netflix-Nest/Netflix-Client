@@ -26,4 +26,15 @@ export const movieApi = {
     ); //hard content
     return res.data;
   },
+  mostView: async (
+    current: number,
+    pageSize: number
+  ): Promise<IModelPaginate<Content>> => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/content?current=${
+        current || 1
+      }&pageSize=${pageSize || 6}&qs=sort=-view`
+    );
+    return res.data.data;
+  },
 };

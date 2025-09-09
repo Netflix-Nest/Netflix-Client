@@ -119,7 +119,8 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
                 fontSize="sm"
                 fontWeight="semibold"
                 textTransform="uppercase"
-                letterSpacing="wider">
+                letterSpacing="wider"
+                key={genre.id}>
                 {genre.name} |
               </Text>
             ))}

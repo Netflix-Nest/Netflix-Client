@@ -16,8 +16,19 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import MovieCard from "./movie.card";
+import { Content } from "@netflix-clone/types";
+import { MdNavigateNext } from "react-icons/md";
+import { MdNavigateBefore } from "react-icons/md";
 
-const MovieSlider = ({ title, movies, showSeeAll = true }) => {
+const MovieSlider = ({
+  title,
+  movies,
+  showSeeAll = true,
+}: {
+  title: string;
+  movies: Content[];
+  showSeeAll?: boolean;
+}) => {
   const slidesPerView = useBreakpointValue({
     base: 2,
     sm: 3,
@@ -26,74 +37,20 @@ const MovieSlider = ({ title, movies, showSeeAll = true }) => {
     xl: 6,
   });
 
-  const defaultMovies = [
-    {
-      id: 1,
-      title: "Giấc mơ người luật sư",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      hasWatchNow: true,
-      rating: "16+",
-    },
-    {
-      id: 2,
-      title: "Thiên Ngu",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      hasWatchNow: true,
-      rating: "13+",
-      badge: true,
-      topRank: 10,
-    },
-    {
-      id: 3,
-      title: "Wednesday",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      rating: "16+",
-      badge: true,
-      topRank: 10,
-    },
-    {
-      id: 4,
-      title: "Điện lư Phim hoạt Kangkung",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      hasWatchNow: true,
-      rating: "13+",
-    },
-    {
-      id: 5,
-      title: "THG: SẠN QUY K-POP",
-      poster: "/api/placeholder/300/450",
-      rating: "16+",
-      badge: true,
-      topRank: 10,
-    },
-    {
-      id: 6,
-      title: "Nàu trí của hai chúa",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      hasWatchNow: true,
-      rating: "18+",
-      badge: true,
-      topRank: 10,
-    },
-  ];
-
-  const movieList = movies || defaultMovies;
-  const sectionTitle = title || "Tìm kiếm nhiều nhất";
-
   return (
-    <Container maxW="container.xl" px={{ base: 4, md: 8, lg: 12 }} py={6}>
+    <Container
+      maxW="100%"
+      px={{ base: 4, md: 8, lg: 12 }}
+      py={6}
+      // margin={"auto"}
+    >
       {/* Section Header */}
       <HStack justify="space-between" mb={4}>
         <Text
           color="white"
           fontSize={{ base: "lg", md: "xl" }}
           fontWeight="bold">
-          {sectionTitle}
+          {title}
         </Text>
 
         {showSeeAll && (
@@ -112,8 +69,10 @@ const MovieSlider = ({ title, movies, showSeeAll = true }) => {
       <Box>
         <Swiper
           modules={[Navigation, Pagination, Mousewheel]}
-          spaceBetween={12}
+          loop={true}
+          spaceBetween={30}
           slidesPerView={slidesPerView}
+          slidesPerGroup={3}
           navigation={{
             nextEl: `.swiper-button-next-${
               title?.replace(/\s+/g, "-") || "default"
@@ -130,9 +89,9 @@ const MovieSlider = ({ title, movies, showSeeAll = true }) => {
             marginLeft: "0px",
             marginRight: "0px",
           }}>
-          {movieList.map((movie, index) => (
+          {movies.map((movie, index) => (
             <SwiperSlide key={movie.id}>
-              <MovieCard movie={movie} isFirst={index === 0} />
+              <MovieCard movie={movie} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -143,11 +102,11 @@ const MovieSlider = ({ title, movies, showSeeAll = true }) => {
             title?.replace(/\s+/g, "-") || "default"
           }`}
           position="absolute"
-          left={-6}
+          left={0}
           top="50%"
           transform="translateY(-50%)"
           zIndex={10}
-          bg="rgba(0,0,0,0.7)"
+          bg="rgba(0,0,0,1)"
           color="white"
           w={12}
           h={12}
@@ -156,21 +115,22 @@ const MovieSlider = ({ title, movies, showSeeAll = true }) => {
           alignItems="center"
           justifyContent="center"
           cursor="pointer"
-          opacity={0}
+          opacity={0.5}
           _hover={{ opacity: 1 }}
-          transition="opacity 0.3s"
-        />
+          transition="opacity 0.3s">
+          <MdNavigateBefore size={96} />
+        </Box>
 
         <Box
           className={`swiper-button-next-${
             title?.replace(/\s+/g, "-") || "default"
           }`}
           position="absolute"
-          right={-6}
+          right={0}
           top="50%"
           transform="translateY(-50%)"
           zIndex={10}
-          bg="rgba(0,0,0,0.7)"
+          bg="rgba(0,0,0,1)"
           color="white"
           w={12}
           h={12}
@@ -179,10 +139,11 @@ const MovieSlider = ({ title, movies, showSeeAll = true }) => {
           alignItems="center"
           justifyContent="center"
           cursor="pointer"
-          opacity={0}
+          opacity={0.5}
           _hover={{ opacity: 1 }}
-          transition="opacity 0.3s"
-        />
+          transition="opacity 0.3s">
+          <MdNavigateNext size={96} />
+        </Box>
       </Box>
     </Container>
   );

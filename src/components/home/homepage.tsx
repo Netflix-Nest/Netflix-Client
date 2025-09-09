@@ -6,54 +6,10 @@ import HeroSection from "../hero-section/hero-section";
 import { Content } from "@netflix-clone/types";
 interface IProps {
   hero: Content;
+  mostView: Content[];
 }
 const NetflixHomepage = (props: IProps) => {
-  const { hero } = props;
-  const trendingMovies = [
-    {
-      id: 1,
-      title: "Giấc mơ người luật sư",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      hasWatchNow: true,
-    },
-    {
-      id: 2,
-      title: "Thiên Ngu",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      hasWatchNow: true,
-      topRank: 10,
-    },
-    {
-      id: 3,
-      title: "Wednesday",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      topRank: 10,
-    },
-    {
-      id: 4,
-      title: "Điện lư Phim hoạt Kangkung",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      hasWatchNow: true,
-    },
-    {
-      id: 5,
-      title: "THG: SẠN QUY K-POP",
-      poster: "/api/placeholder/300/450",
-      topRank: 10,
-    },
-    {
-      id: 6,
-      title: "Nàu trí của hai chúa",
-      poster: "/api/placeholder/300/450",
-      isNew: true,
-      hasWatchNow: true,
-      topRank: 10,
-    },
-  ];
+  const { hero, mostView } = props;
 
   const chineseMovies = [
     {
@@ -94,12 +50,12 @@ const NetflixHomepage = (props: IProps) => {
         <HeroSection movieData={hero} />
 
         <Box bg="black" pt={8}>
-          <MovieSlider title="Tìm kiếm nhiều nhất" movies={trendingMovies} />
+          <MovieSlider title="Được xem nhiều nhất" movies={mostView} />
 
-          <MovieSlider
+          {/* <MovieSlider
             title="Phim và series Trung Quốc"
             movies={chineseMovies}
-          />
+          /> */}
         </Box>
       </VStack>
     </Box>

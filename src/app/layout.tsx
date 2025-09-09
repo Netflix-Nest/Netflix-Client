@@ -5,7 +5,7 @@ import { defaultSystem } from "@chakra-ui/react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Netflix Lite",
+  title: "Netflix",
   description: "The peak movies",
 };
 
