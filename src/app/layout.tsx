@@ -21,6 +21,7 @@ export default function RootLayout({
           minHeight: "100vh",
           backgroundColor: "#141414",
           color: "white",
+          padding: 0,
         }}>
         <NProgressWrapper>
           <NextAuthWrapper>

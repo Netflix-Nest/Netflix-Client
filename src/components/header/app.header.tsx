@@ -28,21 +28,24 @@ export default function AppHeader() {
     <Box
       position="fixed"
       top={0}
-      left={10}
-      right={12}
+      left={0}
+      right={0}
       zIndex={1000}
       transition="background-color 0.3s ease"
-      bg={scrolled ? "black" : "transparent"}
-      px={0}
+      bg={
+        scrolled
+          ? "black"
+          : "linear-gradient(to bottom,rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100% )"
+      }
+      px={19}
+      paddingRight={10}
       py={0}>
       <Flex align="center">
         <Image
-          src={
-            "https://images.ctfassets.net/y2ske730sjqp/1aONibCke6niZhgPxuiilC/2c401b05a07288746ddf3bd3943fbc76/BrandAssets_Logos_01-Wordmark.jpg?w=940"
-          }
+          src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${process.env.NEXT_PUBLIC_LOGO_HEADER}`}
           alt="Netflix"
-          width={90}
-          height={90}
+          width={141}
+          height={55}
         />
         {/* Menu */}
         <Stack

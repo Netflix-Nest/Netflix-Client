@@ -14,7 +14,7 @@ export default function RootLayout({
         <AppHeader />
       </Box>
 
-      <Box as="main" flex="1" p={4}>
+      <Box as="main" flex="1">
         {children}
       </Box>
 

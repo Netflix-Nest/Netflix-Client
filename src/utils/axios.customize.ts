@@ -55,7 +55,9 @@ instance.interceptors.request.use(
   function (config) {
     // NProgress.start();
 
-    const accessToken = cookieHelpers.getCookie("access_token");
+    // const accessToken = cookieHelpers.getCookie("access_token");
+    const accessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlzcyI6Ik5ldGZsaXggTmVzdCIsImVtYWlsIjoiY2Fvbmd1eWVudHJpbmdvY0BnbWFpbC5jb20iLCJmdWxsTmFtZSI6IkNhbyBUcmkgTmdvYyIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1NzE0ODY2OCwiZXhwIjoxODQzNTQ4NjY4fQ.8rTR3-hgxFFrBzoYeoIA35OuACdf1zUzuMcBYCN3E58";
 
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
