@@ -13,28 +13,67 @@ import {
 } from "@chakra-ui/react";
 import { Play, Info } from "lucide-react";
 import { Content } from "@netflix-clone/types";
+import { HiOutlineSpeakerWave, HiOutlineSpeakerXMark } from "react-icons/hi2";
 
 const HeroSection = ({ movieData }: { movieData: Content }) => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const videoRef = useRef(null);
+  const [isMuted, setMuted] = useState(false);
+  const [isInView, setIsInView] = useState(true);
 
-  const containerPadding = useBreakpointValue({ base: 2, md: 4, lg: 8 });
+  const videoRef = useRef(null);
+  const containerRef = useRef(null);
+  const containerPadding = useBreakpointValue({ base: 1, md: 3, lg: 6 });
   const titleSize = useBreakpointValue({ base: "3xl", md: "4xl", lg: "6xl" });
 
   const data = movieData;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      {
+        threshold: 0.5, // 50% component in visible
+        rootMargin: "0px 0px -100px 0px", // Trigger early 100px
+      }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current && isVideoLoaded) {
+      if (isInView) {
+        (videoRef.current as any).play().catch((error) => {
+          console.log("Auto-play prevented:", error);
+        });
+      } else {
+        (videoRef.current as any).pause();
+      }
+    }
+  }, [isInView, isVideoLoaded]);
 
   useEffect(() => {
     // Simulate loading trailer after 3 seconds
     const timer = setTimeout(() => {
       setIsVideoLoaded(true);
       console.log("video load...");
-    }, 3000);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <Box
+      ref={containerRef}
       position="relative"
       h={{ base: "80vh", md: "90vh", lg: "100vh" }}
       w="100%"
@@ -49,8 +88,8 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
                 height: "100%",
                 objectFit: "cover",
               }}
-              autoPlay
-              muted
+              autoPlay={isInView}
+              muted={isMuted}
               loop
               playsInline
               onLoadedData={() => {
@@ -102,7 +141,7 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
         maxW="container.xl"
         h="100%"
         px={containerPadding}
-        margin={"24"}>
+        margin={"20"}>
         <Flex
           direction="column"
           justify="center"
@@ -153,31 +192,32 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
             <Button
               bg="white"
               color="black"
-              size="lg"
+              size="2xl"
               fontWeight="bold"
-              px={8}
+              px={6}
               _hover={{
                 bg: "gray.200",
                 transform: "scale(1.05)",
               }}
               transition="all 0.2s">
-              <Play size={20} />
-              Phát
+              <Play size={30} />
+              <Text fontSize={22}>Phát</Text>
             </Button>
 
             <Button
               variant="outline"
               colorScheme="whiteAlpha"
-              size="lg"
+              size="2xl"
               fontWeight="bold"
               px={6}
+              ml={2}
               _hover={{
                 bg: "whiteAlpha.200",
                 transform: "scale(1.05)",
               }}
               transition="all 0.2s">
-              <Info size={20} />
-              Thông tin khác
+              <Info size={30} />
+              <Text fontSize={22}>Thông tin khác</Text>
             </Button>
           </HStack>
 
@@ -193,6 +233,15 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
               borderRadius="md">
               {data.ageRating}
             </Badge>
+            <Button
+              onClick={() => setMuted((prev) => !prev)}
+              width={30}
+              height={25}
+              variant={"outline"}
+              margin={2}
+              style={{ border: "1px solid #bbb" }}>
+              {isMuted ? <HiOutlineSpeakerXMark /> : <HiOutlineSpeakerWave />}
+            </Button>
           </Box>
         </Flex>
       </Container>

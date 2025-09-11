@@ -60,17 +60,7 @@ const MovieCard = ({ movie }: { movie: Content }) => {
           </Text>
 
           <HStack>
-            {/* {movie.isNew && (
-              <Badge bg="red.500" color="white" fontSize="xs">
-                Tập mới
-              </Badge>
-            )}
-            {movie.badge && (
-              <Badge bg="yellow.500" color="black" fontSize="xs">
-                TOP 10
-              </Badge>
-            )} */}
-            <Badge variant="outline" colorScheme="whiteAlpha" fontSize="xs">
+            <Badge variant="plain" colorScheme="whiteAlpha" fontSize="xs">
               {(movie.totalScoreRating / movie.ratingCount).toFixed(1) || 5}{" "}
               <FaStar />
             </Badge>

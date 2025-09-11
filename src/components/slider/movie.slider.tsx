@@ -81,13 +81,15 @@ const MovieSlider = ({
               title?.replace(/\s+/g, "-") || "default"
             }`,
           }}
-          mousewheel={true}
+          zoom={false}
+          mousewheel={false}
           grabCursor={true}
           style={{
             paddingLeft: "0px",
             paddingRight: "0px",
             marginLeft: "0px",
             marginRight: "0px",
+            overflow: "hidden",
           }}>
           {movies.map((movie, index) => (
             <SwiperSlide key={movie.id}>
@@ -105,7 +107,6 @@ const MovieSlider = ({
           left={0}
           top="50%"
           transform="translateY(-50%)"
-          zIndex={10}
           bg="rgba(0,0,0,1)"
           color="white"
           w={12}
