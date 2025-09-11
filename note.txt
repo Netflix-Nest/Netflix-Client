@@ -3,3 +3,6 @@ add broadcast channel for play experience
 backend: handle OAuth
 
 default thumbnail for genre (not upload thumbnail)
+handle movies recommend don't duplicate 
+button muted video hero section
+handle pause/play video when user scroll on top web

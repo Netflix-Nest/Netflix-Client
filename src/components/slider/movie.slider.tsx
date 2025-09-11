@@ -72,7 +72,7 @@ const MovieSlider = ({
           loop={true}
           spaceBetween={30}
           slidesPerView={slidesPerView}
-          slidesPerGroup={3}
+          slidesPerGroup={6}
           navigation={{
             nextEl: `.swiper-button-next-${
               title?.replace(/\s+/g, "-") || "default"

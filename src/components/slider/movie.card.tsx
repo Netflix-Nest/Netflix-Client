@@ -71,7 +71,8 @@ const MovieCard = ({ movie }: { movie: Content }) => {
               </Badge>
             )} */}
             <Badge variant="outline" colorScheme="whiteAlpha" fontSize="xs">
-              {movie.totalScoreRating / movie.ratingCount || 5} <FaStar />
+              {(movie.totalScoreRating / movie.ratingCount).toFixed(1) || 5}{" "}
+              <FaStar />
             </Badge>
           </HStack>
 

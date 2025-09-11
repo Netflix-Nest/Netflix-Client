@@ -26,14 +26,33 @@ export const movieApi = {
     ); //hard content
     return res.data;
   },
-  mostView: async (
+
+  getContents: async (
     current: number,
-    pageSize: number
+    pageSize: number,
+    excludeContent: number[],
+    sortField?: string,
+    sortOrder?: "ASC" | "DESC",
+    additionalFilters?: any
   ): Promise<IModelPaginate<Content>> => {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/content?current=${
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/content/exclude?current=${
         current || 1
-      }&pageSize=${pageSize || 6}&qs=sort=-view`
+      }&pageSize=${pageSize || 6}`,
+      { ids: excludeContent, sortField, sortOrder, additionalFilters }
+    );
+    console.log(res.data);
+    return res.data.data;
+  },
+
+  recommendation: async (
+    current: number,
+    pageSize: number,
+    excludeIds: number[]
+  ): Promise<IModelPaginate<Content>> => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/content/recommendation?current=${current}&pageSize=${pageSize}`,
+      { ids: excludeIds }
     );
     return res.data.data;
   },
