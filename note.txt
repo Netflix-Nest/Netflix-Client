@@ -3,4 +3,4 @@ add broadcast channel for play experience
 backend: handle OAuth
 
 default thumbnail for genre (not upload thumbnail)
-handle scroll fluency
+modal movie: handle video in any user's watchlist -> thumbups/thumbups outline

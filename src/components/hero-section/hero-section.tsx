@@ -14,17 +14,38 @@ import {
 import { Play, Info } from "lucide-react";
 import { Content } from "@netflix-clone/types";
 import { HiOutlineSpeakerWave, HiOutlineSpeakerXMark } from "react-icons/hi2";
+import NetflixMovieDialog from "../slider/movie.modal";
 
 const HeroSection = ({ movieData }: { movieData: Content }) => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [isVideoModalLoaded, setIsVideoModalLoaded] = useState(false);
   const [isMuted, setMuted] = useState(false);
   const [isInView, setIsInView] = useState(true);
-
+  const [isOpenModal, setOpenModal] = useState(false);
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const containerPadding = useBreakpointValue({ base: 1, md: 3, lg: 6 });
   const titleSize = useBreakpointValue({ base: "3xl", md: "4xl", lg: "6xl" });
-
+  useEffect(() => {
+    if (isOpenModal) {
+      setTimeout(() => {
+        setIsVideoModalLoaded(true);
+      }, 1500);
+    } else {
+      setIsVideoModalLoaded(false);
+    }
+  }, [isOpenModal]);
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isOpenModal) {
+        (videoRef.current as any).pause();
+      } else if (!isOpenModal && isInView) {
+        (videoRef.current as any).play().catch((error) => {
+          console.log("Auto-play prevented:", error);
+        });
+      }
+    }
+  }, [isOpenModal]);
   const data = movieData;
 
   useEffect(() => {
@@ -197,7 +218,6 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
               px={6}
               _hover={{
                 bg: "gray.200",
-                transform: "scale(1.05)",
               }}
               transition="all 0.2s">
               <Play size={30} />
@@ -209,12 +229,14 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
               colorScheme="whiteAlpha"
               size="2xl"
               fontWeight="bold"
+              backgroundColor={"rgba(109, 109, 110, 0.7)"}
+              border={"none"}
               px={6}
               ml={2}
               _hover={{
                 bg: "whiteAlpha.200",
-                transform: "scale(1.05)",
               }}
+              onClick={() => setOpenModal(true)}
               transition="all 0.2s">
               <Info size={30} />
               <Text fontSize={22}>Thông tin khác</Text>
@@ -244,6 +266,12 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
             </Button>
           </Box>
         </Flex>
+        <NetflixMovieDialog
+          movie={data}
+          isOpen={isOpenModal}
+          setIsOpen={setOpenModal}
+          isVideoLoaded={isVideoModalLoaded}
+        />
       </Container>
     </Box>
   );
