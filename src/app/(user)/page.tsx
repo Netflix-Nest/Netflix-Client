@@ -9,6 +9,9 @@ export default async function HomePage() {
   console.log(session);
   // hero content
   const resHero = await movieApi.getHero();
+  if (!resHero || !resHero.data) {
+    throw new Error("Đã xảy ra lỗi!");
+  }
   let excludeContents: number[] = [resHero.data?.id!];
 
   // most view contents
@@ -19,6 +22,9 @@ export default async function HomePage() {
     "view",
     "DESC"
   );
+  if (!resMostView || !resMostView.data) {
+    throw new Error("Đã xảy ra lỗi!");
+  }
   excludeContents.push(...resMostView.data.map((d) => d.id));
 
   // in this year
@@ -30,12 +36,17 @@ export default async function HomePage() {
     "DESC",
     { year: 2025 }
   );
+  if (!resThisYear || !resThisYear.data) {
+    throw new Error("Đã xảy ra lỗi!");
+  }
   excludeContents.push(...resThisYear.data.map((d) => d.id));
 
   // recommendation
   const forYou = await movieApi.getContents(1, 12, excludeContents);
   console.log(forYou);
-
+  if (!forYou || !forYou.data) {
+    throw new Error("Đã xảy ra lỗi!");
+  }
   return (
     <NetflixHomepage
       hero={resHero.data!}

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
@@ -15,8 +16,10 @@ import { Play, Info } from "lucide-react";
 import { Content } from "@netflix-clone/types";
 import { HiOutlineSpeakerWave, HiOutlineSpeakerXMark } from "react-icons/hi2";
 import NetflixMovieDialog from "../slider/movie.modal";
+import { useRouter } from "next/navigation";
 
 const HeroSection = ({ movieData }: { movieData: Content }) => {
+  const router = useRouter();
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [isVideoModalLoaded, setIsVideoModalLoaded] = useState(false);
   const [isMuted, setMuted] = useState(false);
@@ -219,7 +222,13 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
               _hover={{
                 bg: "gray.200",
               }}
-              transition="all 0.2s">
+              transition="all 0.2s"
+              onClick={() => {
+                if (movieData.video) console.log(movieData.video[0].fileName);
+                router.push(
+                  `/watch/${movieData.video && movieData.video[0].fileName}`
+                );
+              }}>
               <Play size={30} />
               <Text fontSize={22}>Phát</Text>
             </Button>

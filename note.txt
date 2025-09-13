@@ -4,3 +4,5 @@ backend: handle OAuth
 
 default thumbnail for genre (not upload thumbnail)
 modal movie: handle video in any user's watchlist -> thumbups/thumbups outline
+reuse component
+data video can be err when seek (<-/click) fast./

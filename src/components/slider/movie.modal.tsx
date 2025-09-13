@@ -25,6 +25,7 @@ import {
 } from "react-icons/fa";
 import { Content } from "@netflix-clone/types";
 import { IoIosStar } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 const NetflixMovieDialog = ({
   movie,
@@ -37,6 +38,7 @@ const NetflixMovieDialog = ({
   setIsOpen: (e) => void;
   isVideoLoaded: boolean;
 }) => {
+  const router = useRouter();
   return (
     // <Box p={8} bg="gray.900" minH="100vh">
     <Dialog.Root
@@ -136,7 +138,12 @@ const NetflixMovieDialog = ({
                       width={"150px"}
                       bg="white"
                       color="black"
-                      _hover={{ bg: "gray.200" }}>
+                      _hover={{ bg: "gray.200" }}
+                      onClick={() =>
+                        router.push(
+                          `watch/${movie.video && movie.video[0].fileName}`
+                        )
+                      }>
                       <FaPlay />
                       Phát
                     </Button>

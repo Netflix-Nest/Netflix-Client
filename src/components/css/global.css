@@ -1,0 +1,51 @@
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+/* Hide scrollbar when fullscreen */
+.video-container:fullscreen {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.video-container:fullscreen::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom slider styles for better Netflix look */
+.chakra-slider__track {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.chakra-slider__filled-track {
+  background: #e50914 !important;
+}
+
+.chakra-slider__thumb {
+  background: white !important;
+  border: 2px solid #e50914 !important;
+}
+
+/* Progress bar hover effect */
+.progress-bar-container:hover .progress-bar {
+  height: 6px !important;
+}
+
+/* Custom button hover effects */
+.control-button {
+  transition: all 0.2s ease;
+}
+
+.control-button:hover {
+  transform: scale(1.1);
+  color: #e50914 !important;
+}
