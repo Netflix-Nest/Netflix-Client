@@ -15,6 +15,10 @@ import {
   AspectRatio,
   Grid,
   GridItem,
+  Avatar,
+  Textarea,
+  Collapsible,
+  Separator,
 } from "@chakra-ui/react";
 import {
   FaPlay,
@@ -22,10 +26,19 @@ import {
   FaThumbsUp,
   FaDownload,
   FaShare,
+  FaReply,
+  FaHeart,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
-import { Content } from "@netflix-clone/types";
+import { Comment, CommentClient, Content } from "@netflix-clone/types";
 import { IoIosStar } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import { movieApi } from "@/utils/api";
+import { CommentItem } from "./comment.box";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/auth.options";
+import { useSession } from "next-auth/react";
 
 const NetflixMovieDialog = ({
   movie,
@@ -38,9 +51,98 @@ const NetflixMovieDialog = ({
   setIsOpen: (e) => void;
   isVideoLoaded: boolean;
 }) => {
+  const { data: session } = useSession();
+  const [comments, setComments] = useState<CommentClient[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [showComments, setShowComments] = useState(true);
+
+  // Pagination states
+  const [totalComments, setTotalComments] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const commentsPerPage = 10;
+  const hasMoreComments = comments.length < totalComments;
+
+  useEffect(() => {
+    const getComments = async (
+      current: number,
+      pageSize: number,
+      id: number
+    ) => {
+      try {
+        const cmts = await movieApi.getComments(current, pageSize, id);
+        if (cmts.data) {
+          setComments(cmts.data);
+          setTotalComments(cmts.data.length);
+        }
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    if (isOpen) {
+      setCurrentPage(1);
+      setComments([]);
+      getComments(1, commentsPerPage, movie.id);
+    }
+  }, [isOpen]);
+
+  const loadMoreComments = async () => {
+    if (isLoadingMore || !hasMoreComments) return;
+
+    setIsLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      const cmts = await movieApi.getComments(
+        nextPage,
+        commentsPerPage,
+        movie.id
+      );
+
+      if (cmts.data) {
+        setComments((prevComments) => [...prevComments, ...cmts.data]);
+        setCurrentPage(nextPage);
+
+        if (cmts.data.length) {
+          setTotalComments(cmts.data.length);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading more comments:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
   const router = useRouter();
+
+  const handleSubmitComment = async () => {
+    if (newComment.trim()) {
+      try {
+        console.log("Submitting comment:", newComment);
+        // submit comment
+        setNewComment("");
+        setReplyingTo(null);
+
+        const cmts = await movieApi.getComments(1, commentsPerPage, movie.id);
+        if (cmts.data) {
+          setComments(cmts.data);
+          setCurrentPage(1);
+          setTotalComments(cmts.data.length);
+        }
+      } catch (error) {
+        console.error("Error submitting comment:", error);
+      }
+    }
+  };
+
+  const handleReply = (commentId: string) => {
+    setReplyingTo(commentId);
+    setShowComments(true);
+  };
+
   return (
-    // <Box p={8} bg="gray.900" minH="100vh">
     <Dialog.Root
       motionPreset="slide-in-bottom"
       open={isOpen}
@@ -68,7 +170,6 @@ const NetflixMovieDialog = ({
                         objectFit: "cover",
                       }}
                       autoPlay
-                      // muted={isMuted}
                       muted
                       loop
                       playsInline
@@ -276,10 +377,8 @@ const NetflixMovieDialog = ({
                 </GridItem>
               </Grid>
 
-              {/* <Divider my={6} borderColor="gray.700" /> */}
-
               {/* Episodes Section */}
-              <Box>
+              <Box mt={8}>
                 {movie.series && (
                   <Flex justify="space-between" align="center" mb={4}>
                     <Text fontSize="xl" fontWeight="bold">
@@ -299,7 +398,8 @@ const NetflixMovieDialog = ({
                       _hover={{ bg: "gray.800" }}
                       cursor="pointer"
                       align="start"
-                      gap={4}>
+                      gap={4}
+                      onClick={() => router.push(`/watch/${episode.fileName}`)}>
                       <Text fontSize="lg" fontWeight="bold" minW="40px">
                         {index + 1}
                       </Text>
@@ -328,12 +428,131 @@ const NetflixMovieDialog = ({
                     </Flex>
                   ))}
               </Box>
+
+              {/* Comments Section */}
+              <Box mt={8}>
+                <Separator borderColor="gray.700" mb={6} />
+
+                <Flex justify="space-between" align="center" mb={6}>
+                  <Text fontSize="xl" fontWeight="bold">
+                    Bình luận ({totalComments})
+                  </Text>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    color="gray.400"
+                    _hover={{ color: "white" }}
+                    onClick={() => setShowComments(!showComments)}>
+                    {showComments ? <FaChevronUp /> : <FaChevronDown />}
+                    {showComments ? "Ẩn bình luận" : "Hiển thị bình luận"}
+                  </Button>
+                </Flex>
+
+                {showComments && (
+                  <Collapsible.Root>
+                    {/* Comment Input */}
+                    {session && (
+                      <Box mb={6}>
+                        <Flex gap={3} align="start">
+                          <Avatar.Root>
+                            <Avatar.Fallback name="avatar" />
+                          </Avatar.Root>
+                          <Box flex={1}>
+                            <Textarea
+                              placeholder={
+                                replyingTo
+                                  ? "Viết trả lời..."
+                                  : "Viết bình luận..."
+                              }
+                              value={newComment}
+                              onChange={(e) => setNewComment(e.target.value)}
+                              bg="gray.800"
+                              border="1px solid"
+                              borderColor="gray.600"
+                              _hover={{ borderColor: "gray.500" }}
+                              _focus={{ borderColor: "red.500" }}
+                              resize="vertical"
+                              minH="80px"
+                            />
+                            <Flex justify="space-between" align="center" mt={2}>
+                              {replyingTo && (
+                                <Button
+                                  size="xs"
+                                  variant="ghost"
+                                  color="gray.400"
+                                  onClick={() => {
+                                    setReplyingTo(null);
+                                    setNewComment("");
+                                  }}>
+                                  Hủy trả lời
+                                </Button>
+                              )}
+                              <Button
+                                size="sm"
+                                colorScheme="red"
+                                ml="auto"
+                                disabled={!newComment.trim()}
+                                onClick={handleSubmitComment}>
+                                {replyingTo ? "Trả lời" : "Bình luận"}
+                              </Button>
+                            </Flex>
+                          </Box>
+                        </Flex>
+                      </Box>
+                    )}
+
+                    {/* Comments List */}
+                    <VStack align="stretch" gap={0}>
+                      {comments.map((comment) => (
+                        <CommentItem
+                          key={comment._id}
+                          comment={comment}
+                          onReply={handleReply}
+                        />
+                      ))}
+                    </VStack>
+
+                    {/* Load More Button */}
+                    {hasMoreComments && (
+                      <Box textAlign="center" mt={6}>
+                        <Button
+                          variant="ghost"
+                          color="gray.400"
+                          _hover={{ color: "white" }}
+                          onClick={loadMoreComments}
+                          disabled={isLoadingMore}
+                          size="sm">
+                          {isLoadingMore
+                            ? "Đang tải..."
+                            : "Hiển thị thêm bình luận"}
+                        </Button>
+                      </Box>
+                    )}
+
+                    {/* Show current count */}
+                    {comments.length > 0 && (
+                      <Box textAlign="center" mt={2}>
+                        <Text fontSize="xs" color="gray.500">
+                          Hiển thị {comments.length} / {totalComments} bình luận
+                        </Text>
+                      </Box>
+                    )}
+                  </Collapsible.Root>
+                )}
+
+                {comments.length === 0 && showComments && (
+                  <Box textAlign="center" py={8}>
+                    <Text color="gray.500" fontSize="sm">
+                      Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
+                    </Text>
+                  </Box>
+                )}
+              </Box>
             </Dialog.Body>
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>
     </Dialog.Root>
-    // </Box>
   );
 };
 

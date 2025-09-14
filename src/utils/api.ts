@@ -1,4 +1,4 @@
-import { Content } from "@netflix-clone/types";
+import { Comment, CommentClient, Content } from "@netflix-clone/types";
 import axios from "./axios.customize";
 
 export const authApi = {
@@ -41,7 +41,6 @@ export const movieApi = {
       }&pageSize=${pageSize || 6}`,
       { ids: excludeContent, sortField, sortOrder, additionalFilters }
     );
-    console.log(res.data);
     return res.data.data;
   },
 
@@ -55,5 +54,16 @@ export const movieApi = {
       { ids: excludeIds }
     );
     return res.data.data;
+  },
+  getComments: async (
+    current: number,
+    pageSize: number,
+    contentId: number
+  ): Promise<IModelPaginate<CommentClient>> => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/comment?current=${current}&pageSize=${pageSize}&content=${contentId}`
+    );
+    console.log("comment: ", res.data);
+    return res.data;
   },
 };

@@ -15,7 +15,7 @@ import {
 import { Play, Info } from "lucide-react";
 import { Content } from "@netflix-clone/types";
 import { HiOutlineSpeakerWave, HiOutlineSpeakerXMark } from "react-icons/hi2";
-import NetflixMovieDialog from "../slider/movie.modal";
+import NetflixMovieDialog from "../modal/movie.modal";
 import { useRouter } from "next/navigation";
 
 const HeroSection = ({ movieData }: { movieData: Content }) => {

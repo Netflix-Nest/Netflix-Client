@@ -43,7 +43,6 @@ export default async function HomePage() {
 
   // recommendation
   const forYou = await movieApi.getContents(1, 12, excludeContents);
-  console.log(forYou);
   if (!forYou || !forYou.data) {
     throw new Error("Đã xảy ra lỗi!");
   }

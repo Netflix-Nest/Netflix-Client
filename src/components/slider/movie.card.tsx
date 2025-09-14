@@ -16,7 +16,7 @@ import "swiper/css/pagination";
 import { FaStar } from "react-icons/fa";
 
 import { Content } from "@netflix-clone/types";
-import NetflixMovieDialog from "./movie.modal";
+import NetflixMovieDialog from "../modal/movie.modal";
 
 const MovieCard = ({ movie }: { movie: Content }) => {
   const cardWidth = useBreakpointValue({
@@ -80,36 +80,8 @@ const MovieCard = ({ movie }: { movie: Content }) => {
                 <FaStar />
               </Badge>
             </HStack>
-
-            {/* {movie.hasWatchNow && (
-            <Button
-              size="sm"
-              bg="red.500"
-              color="white"
-              fontSize="xs"
-              _hover={{ bg: "red.600" }}>
-              Xem ngay
-            </Button>
-          )} */}
           </VStack>
         </Box>
-
-        {/* Top 10 Badge */}
-        {/* {movie.badge && (
-        <Box
-          position="absolute"
-          top={2}
-          right={2}
-          bg="red.500"
-          color="white"
-          px={2}
-          py={1}
-          fontSize="xs"
-          fontWeight="bold"
-          borderRadius="sm">
-          TOP {movie.topRank}
-        </Box>
-      )} */}
       </Box>
       <NetflixMovieDialog
         movie={movie}

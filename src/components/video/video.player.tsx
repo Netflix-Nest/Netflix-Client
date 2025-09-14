@@ -159,12 +159,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ fileName }) => {
         case "KeyM":
           toggleMute();
           break;
+        case "Escape":
+          setIsFullscreen((prev) => {
+            document.exitFullscreen();
+            return false;
+          });
+          break;
       }
     };
 
     document.addEventListener("keydown", handleKeyPress);
     return () => document.removeEventListener("keydown", handleKeyPress);
-  }, [duration]);
+  }, [duration, isFullscreen]);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -208,18 +214,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ fileName }) => {
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
-
-    if (!isFullscreen) {
-      setIsFullscreen(true);
-      if (containerRef.current.requestFullscreen) {
-        containerRef.current.requestFullscreen();
-      }
-    } else {
-      if (document.exitFullscreen) {
-        setIsFullscreen(false);
+    setIsFullscreen((prev) => {
+      if (!prev) {
+        containerRef.current!.requestFullscreen();
+        return true;
+      } else {
         document.exitFullscreen();
+        return false;
       }
-    }
+    });
   };
 
   const skip = (seconds: number) => {
