@@ -23,23 +23,11 @@ import { movieApi, userApi } from "@/utils/api";
 import { COMMON_ERROR } from "@/constants/response.message";
 
 export default function CommentSection({
-  comments,
-  totalComments,
-  currentPage,
-  commentsPerPage,
   movie,
-  setComments,
-  setTotalComments,
-  setCurrentPage,
+  isOpen,
 }: {
-  comments: CommentClient[];
-  totalComments: number;
-  currentPage: number;
-  commentsPerPage: number;
+  isOpen: boolean;
   movie: Content;
-  setComments: React.Dispatch<React.SetStateAction<CommentClient[]>>;
-  setTotalComments: React.Dispatch<React.SetStateAction<number>>;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const { data: session } = useSession();
   const [newComment, setNewComment] = useState("");
@@ -48,8 +36,14 @@ export default function CommentSection({
   const [users, setUsers] = useState<UserMention[] | []>([]);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [showComments, setShowComments] = useState(true);
-  const hasMoreComments = comments.length < totalComments;
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  // comment pagination
+  const [comments, setComments] = useState<CommentClient[]>([]);
+  const [totalComments, setTotalComments] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 10;
+  const hasMoreComments = comments.length < totalComments;
 
   useEffect(() => {
     const atIndex = newComment.lastIndexOf("@");
@@ -81,6 +75,30 @@ export default function CommentSection({
     };
     searchUser();
   }, [debouncedMention]);
+
+  useEffect(() => {
+    const getComments = async (
+      current: number,
+      pageSize: number,
+      id: number
+    ) => {
+      try {
+        const cmts = await movieApi.getComments(current, pageSize, id);
+        if (cmts.data) {
+          setComments(cmts.data);
+          setTotalComments(cmts.data.length);
+        }
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    if (isOpen) {
+      setCurrentPage(1);
+      setComments([]);
+      getComments(1, commentsPerPage, movie.id);
+    }
+  }, [isOpen]);
 
   const loadMoreComments = async () => {
     if (isLoadingMore || !hasMoreComments) return;
@@ -123,6 +141,7 @@ export default function CommentSection({
           content: newComment,
           contentId: movie.id,
           userId: session?.user.id,
+          fullName: session.user.fullName,
         };
         if (replyingTo) {
           createCommentDto.parentId = replyingTo;
@@ -147,6 +166,7 @@ export default function CommentSection({
           parentId: replyingTo,
           userId: session.user.id,
           replies: [],
+          fullName: session.user.fullName,
           createdAt: "30-04-1975" as unknown as Date,
           updatedAt: "30-04-1975" as unknown as Date,
         };

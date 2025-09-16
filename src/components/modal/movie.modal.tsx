@@ -20,35 +20,6 @@ const NetflixMovieDialog = ({
   setIsOpen: (e) => void;
   isVideoLoaded: boolean;
 }) => {
-  const [comments, setComments] = useState<CommentClient[]>([]);
-  const [totalComments, setTotalComments] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const commentsPerPage = 10;
-
-  useEffect(() => {
-    const getComments = async (
-      current: number,
-      pageSize: number,
-      id: number
-    ) => {
-      try {
-        const cmts = await movieApi.getComments(current, pageSize, id);
-        if (cmts.data) {
-          setComments(cmts.data);
-          setTotalComments(cmts.data.length);
-        }
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-
-    if (isOpen) {
-      setCurrentPage(1);
-      setComments([]);
-      getComments(1, commentsPerPage, movie.id);
-    }
-  }, [isOpen]);
-
   return (
     <Dialog.Root
       motionPreset="slide-in-bottom"
@@ -76,16 +47,7 @@ const NetflixMovieDialog = ({
 
               <EpisodeSection movie={movie} />
 
-              <CommentSection
-                comments={comments}
-                commentsPerPage={commentsPerPage}
-                currentPage={currentPage}
-                movie={movie}
-                setComments={setComments}
-                setCurrentPage={setCurrentPage}
-                setTotalComments={setTotalComments}
-                totalComments={totalComments}
-              />
+              <CommentSection isOpen={isOpen} movie={movie} />
             </Dialog.Body>
           </Dialog.Content>
         </Dialog.Positioner>

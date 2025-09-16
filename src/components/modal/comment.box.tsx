@@ -46,7 +46,7 @@ export const CommentItem = ({
         <Box flex={1}>
           <Flex align="center" gap={2} mb={1}>
             <Text fontSize="sm" fontWeight="semibold" color="gray.200">
-              User {comment.userId}
+              {comment.fullName}
             </Text>
             <Text fontSize="xs" color="gray.500">
               {new Date(comment.createdAt).toLocaleDateString("vi-VN")}

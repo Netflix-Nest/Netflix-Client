@@ -1,6 +1,7 @@
 add broadcast channel for play experience
 backend: handle OAuth
 comment: we didn't handle liked cmt at backend, so this point we will resolve later.
+edit comment, delete comment (delete itself and all children)
 
 default thumbnail for genre (not upload thumbnail)
 modal movie: handle video in any user's watchlist -> thumbups/thumbups outline
