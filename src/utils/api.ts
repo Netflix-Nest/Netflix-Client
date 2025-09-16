@@ -1,5 +1,15 @@
-import { Comment, CommentClient, Content } from "@netflix-clone/types";
+import {
+  Comment,
+  CommentClient,
+  Content,
+  CreateCommentDto,
+  UserMention,
+} from "@netflix-clone/types";
 import axios from "./axios.customize";
+import {
+  COMMON_ERROR,
+  CREATE_COMMENT_SUCCESS,
+} from "@/constants/response.message";
 
 export const authApi = {
   refresh: async (): Promise<IBackendRes<any>> => {
@@ -55,6 +65,7 @@ export const movieApi = {
     );
     return res.data.data;
   },
+
   getComments: async (
     current: number,
     pageSize: number,
@@ -64,6 +75,28 @@ export const movieApi = {
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/comment?current=${current}&pageSize=${pageSize}&content=${contentId}`
     );
     console.log("comment: ", res.data);
+    return res.data;
+  },
+
+  submitComment: async (data: CreateCommentDto) => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/comment`,
+      data
+    );
+    console.log(res);
+    if (res.data) {
+      return CREATE_COMMENT_SUCCESS;
+    } else {
+      return COMMON_ERROR;
+    }
+  },
+};
+
+export const userApi = {
+  getUsernames: async (q: string): Promise<IModelPaginate<UserMention>> => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/search?u=${q}`
+    );
     return res.data;
   },
 };

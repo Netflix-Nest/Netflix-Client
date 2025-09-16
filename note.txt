@@ -3,6 +3,5 @@ backend: handle OAuth
 
 default thumbnail for genre (not upload thumbnail)
 modal movie: handle video in any user's watchlist -> thumbups/thumbups outline
-api submit comment -> after: refresh comments or add cmt to end of the list
-comment: @ -> api mention
-reply: @username in input, set parent id ./ cancel reply ?-> fallback.
+issue: post comment -> reload comment: cannot update latest comment.
+todo: divide component: movie.modal.

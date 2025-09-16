@@ -3,6 +3,7 @@ import { movieApi } from "@/utils/api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/auth.options";
 import { Content } from "@netflix-clone/types";
+import { COMMON_ERROR } from "@/constants/response.message";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -10,7 +11,7 @@ export default async function HomePage() {
   // hero content
   const resHero = await movieApi.getHero();
   if (!resHero || !resHero.data) {
-    throw new Error("Đã xảy ra lỗi!");
+    throw new Error(COMMON_ERROR);
   }
   let excludeContents: number[] = [resHero.data?.id!];
 
@@ -23,7 +24,7 @@ export default async function HomePage() {
     "DESC"
   );
   if (!resMostView || !resMostView.data) {
-    throw new Error("Đã xảy ra lỗi!");
+    throw new Error(COMMON_ERROR);
   }
   excludeContents.push(...resMostView.data.map((d) => d.id));
 
@@ -37,14 +38,14 @@ export default async function HomePage() {
     { year: 2025 }
   );
   if (!resThisYear || !resThisYear.data) {
-    throw new Error("Đã xảy ra lỗi!");
+    throw new Error(COMMON_ERROR);
   }
   excludeContents.push(...resThisYear.data.map((d) => d.id));
 
   // recommendation
   const forYou = await movieApi.getContents(1, 12, excludeContents);
   if (!forYou || !forYou.data) {
-    throw new Error("Đã xảy ra lỗi!");
+    throw new Error(COMMON_ERROR);
   }
   return (
     <NetflixHomepage

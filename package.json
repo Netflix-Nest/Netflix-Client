@@ -12,7 +12,7 @@
     "@chakra-ui/react": "^3.26.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@netflix-clone/types": "^2.0.6",
+    "@netflix-clone/types": "^2.1.0",
     "axios": "^1.11.0",
     "dayjs": "^1.11.18",
     "framer-motion": "^12.23.12",

@@ -31,14 +31,21 @@ import {
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
-import { Comment, CommentClient, Content } from "@netflix-clone/types";
+import {
+  Comment,
+  CommentClient,
+  Content,
+  CreateCommentDto,
+  UserMention,
+} from "@netflix-clone/types";
 import { IoIosStar } from "react-icons/io";
 import { useRouter } from "next/navigation";
-import { movieApi } from "@/utils/api";
+import { movieApi, userApi } from "@/utils/api";
 import { CommentItem } from "./comment.box";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/auth.options";
 import { useSession } from "next-auth/react";
+import { COMMON_ERROR } from "@/constants/response.message";
 
 const NetflixMovieDialog = ({
   movie,
@@ -54,6 +61,9 @@ const NetflixMovieDialog = ({
   const { data: session } = useSession();
   const [comments, setComments] = useState<CommentClient[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [mention, setMention] = useState("");
+  const [debouncedMention, setDebounceMention] = useState("");
+  const [users, setUsers] = useState<UserMention[] | []>([]);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [showComments, setShowComments] = useState(true);
 
@@ -63,6 +73,37 @@ const NetflixMovieDialog = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const commentsPerPage = 10;
   const hasMoreComments = comments.length < totalComments;
+
+  useEffect(() => {
+    const atIndex = newComment.lastIndexOf("@");
+    if (atIndex !== -1) {
+      const usernamePart = newComment.slice(atIndex + 1);
+      if (usernamePart && !usernamePart.includes(" ")) {
+        setMention(usernamePart);
+      } else {
+        setMention("");
+      }
+    } else {
+      setMention("");
+    }
+  }, [newComment]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebounceMention(mention);
+    }, 200);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [mention]);
+
+  useEffect(() => {
+    const searchUser = async () => {
+      const resUsers = await userApi.getUsernames(debouncedMention);
+      setUsers(resUsers.data);
+    };
+    searchUser();
+  }, [debouncedMention]);
 
   useEffect(() => {
     const getComments = async (
@@ -121,7 +162,18 @@ const NetflixMovieDialog = ({
     if (newComment.trim()) {
       try {
         console.log("Submitting comment:", newComment);
-        // submit comment
+        if (!session?.user.id) {
+          throw new Error(COMMON_ERROR);
+        }
+        const createCommentDto: CreateCommentDto = {
+          content: newComment,
+          contentId: movie.id,
+          userId: session?.user.id,
+        };
+        if (replyingTo) {
+          createCommentDto.parentId = replyingTo;
+        }
+        const res = await movieApi.submitComment(createCommentDto);
         setNewComment("");
         setReplyingTo(null);
 
@@ -452,12 +504,12 @@ const NetflixMovieDialog = ({
                   <Collapsible.Root>
                     {/* Comment Input */}
                     {session && (
-                      <Box mb={6}>
+                      <Box mb={6} position="relative">
                         <Flex gap={3} align="start">
                           <Avatar.Root>
                             <Avatar.Fallback name="avatar" />
                           </Avatar.Root>
-                          <Box flex={1}>
+                          <Box flex={1} position="relative">
                             <Textarea
                               placeholder={
                                 replyingTo
@@ -474,15 +526,145 @@ const NetflixMovieDialog = ({
                               resize="vertical"
                               minH="80px"
                             />
+
+                            {/* User Mentions Dropdown */}
+                            {mention && users.length > 0 && (
+                              <Box
+                                position="absolute"
+                                bottom="100%"
+                                left={0}
+                                right={0}
+                                mb={1}
+                                bg="gray.900"
+                                border="1px solid"
+                                borderColor="gray.600"
+                                borderRadius="md"
+                                boxShadow="0 -4px 20px rgba(0, 0, 0, 0.4)"
+                                zIndex={1000}
+                                maxH="200px"
+                                overflowY="auto"
+                                css={{
+                                  "&::-webkit-scrollbar": {
+                                    width: "4px",
+                                  },
+                                  "&::-webkit-scrollbar-track": {
+                                    background: "transparent",
+                                  },
+                                  "&::-webkit-scrollbar-thumb": {
+                                    background: "#4A5568",
+                                    borderRadius: "2px",
+                                  },
+                                  "&::-webkit-scrollbar-thumb:hover": {
+                                    background: "#718096",
+                                  },
+                                }}>
+                                {users.map((user: UserMention, index) => (
+                                  <Flex
+                                    key={user.id}
+                                    align="center"
+                                    p={3}
+                                    cursor="pointer"
+                                    _hover={{
+                                      bg: "red.600",
+                                      transform: "translateX(2px)",
+                                      transition: "all 0.2s ease",
+                                    }}
+                                    _active={{ bg: "red.700" }}
+                                    borderBottom={
+                                      index < users.length - 1
+                                        ? "1px solid"
+                                        : "none"
+                                    }
+                                    borderBottomColor="gray.700"
+                                    onClick={() => {
+                                      const atIndex =
+                                        newComment.lastIndexOf("@");
+                                      const beforeAt = newComment.slice(
+                                        0,
+                                        atIndex
+                                      );
+                                      const afterMention = newComment.slice(
+                                        atIndex + mention.length + 1
+                                      );
+                                      setNewComment(
+                                        `${beforeAt}@${user.username} ${afterMention}`
+                                      );
+                                      setMention("");
+                                      setUsers([]);
+                                    }}>
+                                    <Avatar.Root size="sm" mr={3}>
+                                      <Avatar.Image
+                                        src={
+                                          user.avatar
+                                            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${user.avatar}`
+                                            : `${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${process.env.NEXT_PUBLIC_DEFAULT_AVATAR}`
+                                        }
+                                        alt={user.username}
+                                      />
+                                      <Avatar.Fallback
+                                        name={user.username}
+                                        bg="red.600"
+                                        color="white"
+                                        fontSize="xs"
+                                      />
+                                    </Avatar.Root>
+                                    <Box flex={1}>
+                                      <Text
+                                        fontSize="sm"
+                                        fontWeight="medium"
+                                        color="white"
+                                        mb={0.5}>
+                                        {user.username}
+                                      </Text>
+                                      {user.fullName && (
+                                        <Text
+                                          fontSize="xs"
+                                          color="gray.400"
+                                          lineHeight="1.2">
+                                          {user.fullName}
+                                        </Text>
+                                      )}
+                                    </Box>
+                                  </Flex>
+                                ))}
+                              </Box>
+                            )}
+
+                            {/* Mention hint when typing @ */}
+                            {newComment[newComment.length - 1] === "@" &&
+                              mention === "" && (
+                                <Box
+                                  position="absolute"
+                                  bottom="100%"
+                                  left={0}
+                                  right={0}
+                                  mb={1}
+                                  bg="gray.800"
+                                  border="1px solid"
+                                  borderColor="gray.600"
+                                  borderRadius="md"
+                                  p={3}
+                                  zIndex={999}>
+                                  <Flex align="center" gap={2}>
+                                    <Text fontSize="sm" color="gray.400">
+                                      💡 Gõ tên người dùng để mention
+                                    </Text>
+                                  </Flex>
+                                </Box>
+                              )}
+
                             <Flex justify="space-between" align="center" mt={2}>
                               {replyingTo && (
                                 <Button
                                   size="xs"
                                   variant="ghost"
                                   color="gray.400"
+                                  _hover={{ color: "white" }}
                                   onClick={() => {
                                     setReplyingTo(null);
                                     setNewComment("");
+                                    setMention("");
+                                    setUsers([]);
                                   }}>
                                   Hủy trả lời
                                 </Button>
@@ -492,7 +674,13 @@ const NetflixMovieDialog = ({
                                 colorScheme="red"
                                 ml="auto"
                                 disabled={!newComment.trim()}
-                                onClick={handleSubmitComment}>
+                                onClick={handleSubmitComment}
+                                _hover={{
+                                  transform: "translateY(-1px)",
+                                  boxShadow:
+                                    "0 4px 12px rgba(229, 62, 62, 0.4)",
+                                }}
+                                transition="all 0.2s ease">
                                 {replyingTo ? "Trả lời" : "Bình luận"}
                               </Button>
                             </Flex>
@@ -518,10 +706,15 @@ const NetflixMovieDialog = ({
                         <Button
                           variant="ghost"
                           color="gray.400"
-                          _hover={{ color: "white" }}
+                          _hover={{
+                            color: "white",
+                            transform: "translateY(-1px)",
+                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+                          }}
                           onClick={loadMoreComments}
                           disabled={isLoadingMore}
-                          size="sm">
+                          size="sm"
+                          transition="all 0.2s ease">
                           {isLoadingMore
                             ? "Đang tải..."
                             : "Hiển thị thêm bình luận"}
