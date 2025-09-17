@@ -4,6 +4,7 @@ import {
   Content,
   CreateCommentDto,
   UserMention,
+  UserProfile,
 } from "@netflix-clone/types";
 import axios from "./axios.customize";
 import {
@@ -96,6 +97,13 @@ export const userApi = {
   getUsernames: async (q: string): Promise<IModelPaginate<UserMention>> => {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/search?u=${q}`
+    );
+    return res.data;
+  },
+
+  getAccount: async (): Promise<IBackendRes<UserProfile>> => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/account`
     );
     return res.data;
   },

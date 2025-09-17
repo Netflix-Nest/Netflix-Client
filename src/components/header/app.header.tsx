@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import NextLink from "next/link";
 import {
   Box,
@@ -10,11 +11,26 @@ import {
   Spacer,
   Avatar,
   Image,
+  Menu,
+  MenuItem,
+  Text,
+  Portal,
 } from "@chakra-ui/react";
-import { Search, Bell } from "lucide-react";
+import {
+  Search,
+  Bell,
+  ChevronDown,
+  User,
+  HelpCircle,
+  LogOut,
+} from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function AppHeader() {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,8 +40,25 @@ export default function AppHeader() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isActiveLink = (href) => {
+    if (href === "/" && pathname === "/") return true;
+    if (href !== "/" && pathname.startsWith(href)) return true;
+    return false;
+  };
+
+  // Navigation items
+  const navItems = [
+    { href: "/", label: "Trang chủ" },
+    { href: "/series", label: "Series" },
+    { href: "/movies", label: "Phim" },
+    { href: "/new", label: "Mới & Phổ biến" },
+    { href: "/my-list", label: "Danh sách của tôi" },
+    { href: "/browse-by-lang", label: "Duyệt theo ngôn ngữ" },
+  ];
+
   return (
     <Box
+      data-header
       position="fixed"
       top={0}
       left={0}
@@ -47,47 +80,125 @@ export default function AppHeader() {
           width={141}
           height={55}
         />
+
         {/* Menu */}
-        <Stack
-          direction="row"
-          ml={10}
-          fontSize="md"
-          fontWeight="unset"
-          spaceX={3}>
-          <Link as={NextLink} href="/">
-            Trang chủ
-          </Link>
-          <Link as={NextLink} href="/series">
-            Series
-          </Link>
-          <Link as={NextLink} href="/movies">
-            Phim
-          </Link>
-          <Link as={NextLink} href="/new">
-            Mới & Phổ biến
-          </Link>
-          <Link as={NextLink} href="/my-list">
-            Danh sách của tôi
-          </Link>
-          <Link as={NextLink} href="/browse-by-lang">
-            Duyệt theo ngôn ngữ
-          </Link>
+        <Stack direction="row" ml={10} fontSize="md" spaceX={3}>
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              as={NextLink}
+              href={item.href}
+              fontWeight={isActiveLink(item.href) ? "bold" : "normal"}
+              color={isActiveLink(item.href) ? "white" : "gray.300"}
+              transition="all 0.2s"
+              _hover={{
+                color: "white",
+                // fontWeight: "semibold",
+              }}>
+              {item.label}
+            </Link>
+          ))}
         </Stack>
 
         <Spacer />
 
         {/* Icons */}
-        <Stack direction="row">
+        <Stack direction="row" align="center">
           <IconButton aria-label="Search" variant="ghost">
             <Search size={20} />
           </IconButton>
           <IconButton aria-label="Notifications" variant="ghost">
             <Bell size={20} />
           </IconButton>
-          <Avatar.Root size={"sm"} key={10} shape={"square"}>
-            <Avatar.Fallback name="Avatar" />
-            <Avatar.Image src="https://bit.ly/sage-adebayo" />
-          </Avatar.Root>
+
+          {/* User Menu Dropdown */}
+          <Menu.Root>
+            <Menu.Trigger
+              as={Box}
+              cursor="pointer"
+              display="flex"
+              alignItems="center"
+              gap={1}
+              _hover={{ opacity: 0.8 }}
+              transition="opacity 0.2s">
+              <Avatar.Root size="sm" shape="square">
+                <Avatar.Fallback name="Avatar" />
+                <Avatar.Image
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${
+                    session?.user.avatar ||
+                    process.env.NEXT_PUBLIC_DEFAULT_AVATAR
+                  }`}
+                />
+              </Avatar.Root>
+              <ChevronDown size={16} color="white" />
+            </Menu.Trigger>
+            <Portal>
+              <Menu.Positioner>
+                <Menu.Content
+                  bg="rgba(0, 0, 0, 0.9)"
+                  border="1px solid rgba(255, 255, 255, 0.2)"
+                  borderRadius="4px"
+                  py={2}
+                  minW="200px">
+                  {session && (
+                    <MenuItem
+                      value="account"
+                      bg="transparent"
+                      _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+                      display="flex"
+                      alignItems="center"
+                      gap={3}
+                      py={3}>
+                      <User size={16} />
+                      <Text
+                        color="white"
+                        fontSize="sm"
+                        onClick={() => router.push("/account")}>
+                        Tài khoản
+                      </Text>
+                    </MenuItem>
+                  )}
+
+                  <MenuItem
+                    value="help"
+                    bg="transparent"
+                    _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+                    display="flex"
+                    alignItems="center"
+                    gap={3}
+                    py={3}>
+                    <HelpCircle size={16} />
+                    <Text
+                      color="white"
+                      fontSize="sm"
+                      onClick={() => router.push("/help")}>
+                      Trung tâm trợ giúp
+                    </Text>
+                  </MenuItem>
+                  {session && (
+                    <Menu.Item
+                      value="logout"
+                      bg="transparent"
+                      _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+                      display="flex"
+                      alignItems="center"
+                      gap={3}
+                      py={3}
+                      borderTop="1px solid rgba(255, 255, 255, 0.2)"
+                      mt={1}>
+                      <LogOut size={16} />
+                      <Text
+                        color="white"
+                        fontSize="sm"
+                        onClick={() => signOut()}>
+                        Đăng xuất khỏi Netflix
+                      </Text>
+                    </Menu.Item>
+                  )}
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
+          </Menu.Root>
         </Stack>
       </Flex>
     </Box>

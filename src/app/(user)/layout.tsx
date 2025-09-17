@@ -1,6 +1,6 @@
 import AppFooter from "@/components/footer/app.footer";
 import AppHeader from "@/components/header/app.header";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Container, Flex } from "@chakra-ui/react";
 import React from "react";
 
 export default function RootLayout({
