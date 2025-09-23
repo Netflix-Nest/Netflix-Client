@@ -18,63 +18,38 @@ import {
   Flex,
   Icon,
   Field,
+  Dialog,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { UserProfile } from "@netflix-clone/types";
 import { toaster } from "../ui/toaster";
 import { FaEdit } from "react-icons/fa";
 import { IoIosLock } from "react-icons/io";
+import { userApi } from "@/utils/api";
+import { useSession } from "next-auth/react";
+import ChangePassDiaLog from "./change-pass.dialog";
 
 export default function Account({ user }: { user: UserProfile }) {
+  const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: user.fullName,
     username: user.username,
     phoneNumber: user.phoneNumber,
   });
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
 
   const { open, onOpen, onClose } = useDisclosure();
-  // const toast = useToast();
 
-  const handleSave = () => {
-    // Handle save logic here
+  const handleSave = async () => {
+    setIsLoading(true);
+    const res = await userApi.updateInfo(session?.user.id!, formData);
+    console.log("after save changes: ", res.data);
     setIsEditing(false);
+    setIsLoading(false);
     toaster.create({
       title: "Profile updated",
       description: "Your profile has been updated successfully.",
-      type: "success",
-      duration: 3000,
-      closable: true,
-    });
-  };
-
-  const handlePasswordChange = () => {
-    // Handle password change logic here
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toaster.create({
-        title: "Error",
-        description: "New passwords don't match.",
-        type: "error",
-        duration: 3000,
-        closable: true,
-      });
-      return;
-    }
-
-    onClose();
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-    toaster.create({
-      title: "Password changed",
-      description: "Your password has been changed successfully.",
       type: "success",
       duration: 3000,
       closable: true,
@@ -122,6 +97,7 @@ export default function Account({ user }: { user: UserProfile }) {
                 <Button
                   colorScheme={isEditing ? "green" : "red"}
                   variant={isEditing ? "solid" : "outline"}
+                  loading={isLoading}
                   onClick={() =>
                     isEditing ? handleSave() : setIsEditing(true)
                   }>
@@ -132,7 +108,7 @@ export default function Account({ user }: { user: UserProfile }) {
 
               <SimpleGrid columns={{ base: 1, md: 2 }} gap={8}>
                 {/* Avatar and Basic Info */}
-                <VStack gap={6}>
+                <VStack gap={6} justifyContent={"left"}>
                   <Avatar.Root size="2xl">
                     <Avatar.Image
                       src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${user.avatar}`}
@@ -199,7 +175,10 @@ export default function Account({ user }: { user: UserProfile }) {
                   <Field.Root disabled={!isEditing}>
                     <Field.Label color="gray.300">Phone Number</Field.Label>
                     <Input
-                      value={formData.phoneNumber}
+                      value={formData.phoneNumber || ""}
+                      placeholder={
+                        formData.phoneNumber ? "" : "Enter your phone number"
+                      }
                       onChange={(e) =>
                         setFormData({
                           ...formData,
@@ -290,83 +269,12 @@ export default function Account({ user }: { user: UserProfile }) {
         </VStack>
       </Container>
 
-      {/* Change Password Modal */}
-      {/* <Modal isOpen={isOpen} onClose={onClose} size="md">
-        <ModalOverlay bg="blackAlpha.800" />
-        <ModalContent bg="gray.800" border="1px" borderColor="gray.700">
-          <ModalHeader color="white">Change Password</ModalHeader>
-          <ModalCloseButton color="white" />
-          <ModalBody>
-            <VStack gap={4}>
-              <FormControl>
-                <FormLabel color="gray.300">Current Password</FormLabel>
-                <Input
-                  type="password"
-                  value={passwordData.currentPassword}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      currentPassword: e.target.value,
-                    })
-                  }
-                  bg="gray.700"
-                  border="1px"
-                  borderColor="gray.600"
-                  _focus={{ borderColor: "red.500" }}
-                  color="white"
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel color="gray.300">New Password</FormLabel>
-                <Input
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      newPassword: e.target.value,
-                    })
-                  }
-                  bg="gray.700"
-                  border="1px"
-                  borderColor="gray.600"
-                  _focus={{ borderColor: "red.500" }}
-                  color="white"
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel color="gray.300">Confirm New Password</FormLabel>
-                <Input
-                  type="password"
-                  value={passwordData.confirmPassword}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      confirmPassword: e.target.value,
-                    })
-                  }
-                  bg="gray.700"
-                  border="1px"
-                  borderColor="gray.600"
-                  _focus={{ borderColor: "red.500" }}
-                  color="white"
-                />
-              </FormControl>
-            </VStack>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose} color="gray.400">
-              Cancel
-            </Button>
-            <Button colorScheme="red" onClick={handlePasswordChange}>
-              Change Password
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal> */}
+      <ChangePassDiaLog
+        isLoading={isLoading}
+        onClose={onClose}
+        open={open}
+        setIsLoading={setIsLoading}
+      />
     </Box>
   );
 }

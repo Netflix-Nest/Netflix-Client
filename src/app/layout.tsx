@@ -1,4 +1,5 @@
 import { Provider } from "@/components/ui/provider";
+import { Toaster } from "@/components/ui/toaster";
 import NextAuthWrapper from "@/lib/next.auth.wrapper";
 import NProgressWrapper from "@/lib/nprogress.wrapper";
 import { defaultSystem } from "@chakra-ui/react";
@@ -25,7 +26,10 @@ export default function RootLayout({
         }}>
         <NProgressWrapper>
           <NextAuthWrapper>
-            <Provider>{children}</Provider>
+            <Provider>
+              {children}
+              <Toaster />
+            </Provider>
           </NextAuthWrapper>
         </NProgressWrapper>
       </body>

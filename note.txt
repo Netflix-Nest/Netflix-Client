@@ -5,4 +5,4 @@ edit comment, delete comment (delete itself and all children)
 
 default thumbnail for genre (not upload thumbnail)
 modal movie: handle video in any user's watchlist -> thumbups/thumbups outline
-acc page: center left info, handle submit change info, change pass.
+acc page: upload avatar

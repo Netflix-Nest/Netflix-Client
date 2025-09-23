@@ -107,4 +107,21 @@ export const userApi = {
     );
     return res.data;
   },
+  updateInfo: async (
+    id: number,
+    updateUserDto: Partial<UserProfile>
+  ): Promise<IBackendRes<UserProfile>> => {
+    const res = await axios.patch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${id}`,
+      updateUserDto
+    );
+    return res.data;
+  },
+  changePass: async (id: number, oldPass: string, newPass: string) => {
+    const res = await axios.patch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/change-pass/${id}`,
+      { oldPass, newPass }
+    );
+    return res.data || res;
+  },
 };
