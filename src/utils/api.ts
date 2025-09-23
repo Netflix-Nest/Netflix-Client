@@ -124,4 +124,11 @@ export const userApi = {
     );
     return res.data || res;
   },
+  uploadAvatar: async (file: FormData) => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/media/upload-image`,
+      file
+    );
+    return res.data;
+  },
 };

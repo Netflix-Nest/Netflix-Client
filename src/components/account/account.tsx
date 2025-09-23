@@ -28,6 +28,7 @@ import { IoIosLock } from "react-icons/io";
 import { userApi } from "@/utils/api";
 import { useSession } from "next-auth/react";
 import ChangePassDiaLog from "./change-pass.dialog";
+import { AvatarSection } from "./avatar.section";
 
 export default function Account({ user }: { user: UserProfile }) {
   const { data: session } = useSession();
@@ -44,7 +45,6 @@ export default function Account({ user }: { user: UserProfile }) {
   const handleSave = async () => {
     setIsLoading(true);
     const res = await userApi.updateInfo(session?.user.id!, formData);
-    console.log("after save changes: ", res.data);
     setIsEditing(false);
     setIsLoading(false);
     toaster.create({
@@ -60,17 +60,6 @@ export default function Account({ user }: { user: UserProfile }) {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "ACTIVE":
-        return "green";
-      case "INACTIVE":
-        return "red";
-      default:
-        return "gray";
-    }
   };
 
   return (
@@ -108,28 +97,7 @@ export default function Account({ user }: { user: UserProfile }) {
 
               <SimpleGrid columns={{ base: 1, md: 2 }} gap={8}>
                 {/* Avatar and Basic Info */}
-                <VStack gap={6} justifyContent={"left"}>
-                  <Avatar.Root size="2xl">
-                    <Avatar.Image
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${user.avatar}`}
-                      alt={user.fullName}
-                    />
-                  </Avatar.Root>
-                  <VStack gap={2}>
-                    <Badge
-                      colorScheme={getStatusColor(user.status)}
-                      fontSize="sm"
-                      px={3}
-                      py={1}
-                      borderRadius="full">
-                      {user.status}
-                    </Badge>
-                    <Text color="gray.400" fontSize="sm">
-                      Member since{" "}
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </Text>
-                  </VStack>
-                </VStack>
+                <AvatarSection user={user} />
 
                 {/* Form Fields */}
                 <VStack gap={4} align="stretch">

@@ -5,4 +5,4 @@ edit comment, delete comment (delete itself and all children)
 
 default thumbnail for genre (not upload thumbnail)
 modal movie: handle video in any user's watchlist -> thumbups/thumbups outline
-acc page: upload avatar
+handle session: access_token, refresh_token, access_expire

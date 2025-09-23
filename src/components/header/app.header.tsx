@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import NextLink from "next/link";
 import {
   Box,
@@ -25,13 +25,13 @@ import {
   LogOut,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { UserProfile } from "@netflix-clone/types";
 
-export default function AppHeader() {
+export default function AppHeader({ user }: { user: UserProfile }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -124,10 +124,7 @@ export default function AppHeader() {
               <Avatar.Root size="sm" shape="square">
                 <Avatar.Fallback name="Avatar" />
                 <Avatar.Image
-                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${
-                    session?.user.avatar ||
-                    process.env.NEXT_PUBLIC_DEFAULT_AVATAR
-                  }`}
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${user.avatar}`}
                 />
               </Avatar.Root>
               <ChevronDown size={16} color="white" />
@@ -147,13 +144,11 @@ export default function AppHeader() {
                       _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
                       display="flex"
                       alignItems="center"
+                      onClick={() => router.push("/account")}
                       gap={3}
                       py={3}>
                       <User size={16} />
-                      <Text
-                        color="white"
-                        fontSize="sm"
-                        onClick={() => router.push("/account")}>
+                      <Text color="white" fontSize="sm">
                         Tài khoản
                       </Text>
                     </MenuItem>
@@ -165,13 +160,11 @@ export default function AppHeader() {
                     _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
                     display="flex"
                     alignItems="center"
+                    onClick={() => redirect("/help")}
                     gap={3}
                     py={3}>
                     <HelpCircle size={16} />
-                    <Text
-                      color="white"
-                      fontSize="sm"
-                      onClick={() => router.push("/help")}>
+                    <Text color="white" fontSize="sm">
                       Trung tâm trợ giúp
                     </Text>
                   </MenuItem>
@@ -182,15 +175,13 @@ export default function AppHeader() {
                       _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
                       display="flex"
                       alignItems="center"
+                      onClick={() => signOut()}
                       gap={3}
                       py={3}
                       borderTop="1px solid rgba(255, 255, 255, 0.2)"
                       mt={1}>
                       <LogOut size={16} />
-                      <Text
-                        color="white"
-                        fontSize="sm"
-                        onClick={() => signOut()}>
+                      <Text color="white" fontSize="sm">
                         Đăng xuất khỏi Netflix
                       </Text>
                     </Menu.Item>
