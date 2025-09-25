@@ -51,9 +51,9 @@ export default function AppHeader({ user }: { user: UserProfile }) {
     { href: "/", label: "Trang chủ" },
     { href: "/series", label: "Series" },
     { href: "/movies", label: "Phim" },
-    { href: "/new", label: "Mới & Phổ biến" },
+    { href: "/bookmark", label: "Đã đánh dấu" },
     { href: "/my-list", label: "Danh sách của tôi" },
-    { href: "/browse-by-lang", label: "Duyệt theo ngôn ngữ" },
+    { href: "/history", label: "Đã xem gần đây" },
   ];
 
   return (
@@ -79,6 +79,8 @@ export default function AppHeader({ user }: { user: UserProfile }) {
           alt="Netflix"
           width={141}
           height={55}
+          onClick={() => (window.location.href = "/")}
+          _hover={{ cursor: "pointer" }}
         />
 
         {/* Menu */}

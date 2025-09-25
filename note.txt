@@ -5,4 +5,5 @@ edit comment, delete comment (delete itself and all children)
 
 default thumbnail for genre (not upload thumbnail)
 modal movie: handle video in any user's watchlist -> thumbups/thumbups outline
-handle session: access_token, refresh_token, access_expire
+handle true session: access_token, refresh_token, access_expire
+fetch data: data can be undefined, mock it
