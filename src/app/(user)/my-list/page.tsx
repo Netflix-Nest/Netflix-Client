@@ -1,5 +1,7 @@
-import { Box } from "@chakra-ui/react";
+import { WatchList } from "@/components/watchlist/watchlist";
+import { engagementApi } from "@/utils/api";
 
-export default function MyListPage() {
-  return <Box top={60}>My list page</Box>;
+export default async function MyListPage() {
+  const resList = await engagementApi.getWatchlists();
+  return <WatchList list={resList.data} />;
 }

@@ -52,7 +52,7 @@ export default function AppHeader({ user }: { user: UserProfile }) {
     { href: "/series", label: "Series" },
     { href: "/movies", label: "Phim" },
     { href: "/bookmark", label: "Đã đánh dấu" },
-    { href: "/my-list", label: "Danh sách của tôi" },
+    { href: "/my-list", label: "Danh sách xem của tôi" },
     { href: "/history", label: "Đã xem gần đây" },
   ];
 

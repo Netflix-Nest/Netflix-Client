@@ -3,8 +3,10 @@ import {
   CommentClient,
   Content,
   CreateCommentDto,
+  CreateWatchlistDto,
   UserMention,
   UserProfile,
+  Watchlist,
 } from "@netflix-clone/types";
 import axios from "./axios.customize";
 import {
@@ -91,6 +93,17 @@ export const movieApi = {
       return COMMON_ERROR;
     }
   },
+  getContentByIds: async (
+    ids: number[],
+    current: number,
+    pageSize: number
+  ): Promise<IModelPaginate<Content>> => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/content/by-ids?current=${current}&pageSize=${pageSize}`,
+      { ids }
+    );
+    return res.data.data;
+  },
 };
 
 export const userApi = {
@@ -128,6 +141,30 @@ export const userApi = {
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/media/upload-image`,
       file
+    );
+    return res.data;
+  },
+};
+
+export const engagementApi = {
+  createWatchlist: async (
+    createWlDto: CreateWatchlistDto
+  ): Promise<IBackendRes<Watchlist>> => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/watchlist`,
+      createWlDto
+    );
+    return res.data;
+  },
+  getWatchlists: async (): Promise<IModelPaginate<Watchlist>> => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/watchlist`
+    );
+    return res.data;
+  },
+  getWatchlistsDetail: async (id: string): Promise<IBackendRes<Watchlist>> => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/watchlist/${id}`
     );
     return res.data;
   },
