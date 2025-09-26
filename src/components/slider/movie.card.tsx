@@ -9,6 +9,7 @@ import {
   Button,
   Container,
   useBreakpointValue,
+  CloseButton,
 } from "@chakra-ui/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -17,8 +18,17 @@ import { FaStar } from "react-icons/fa";
 
 import { Content } from "@netflix-clone/types";
 import NetflixMovieDialog from "../modal/movie.modal";
+import { MdOutlineCancel } from "react-icons/md";
 
-const MovieCard = ({ movie }: { movie: Content }) => {
+const MovieCard = ({
+  movie,
+  isEdit = false,
+  removeMovie,
+}: {
+  movie: Content;
+  isEdit: boolean;
+  removeMovie: (v: number) => void;
+}) => {
   const cardWidth = useBreakpointValue({
     base: "200px",
     md: "250px",
@@ -52,6 +62,22 @@ const MovieCard = ({ movie }: { movie: Content }) => {
           transform: "scale(1.05)",
         }}
         onClick={() => setIsOpen(true)}>
+        {isEdit && (
+          <CloseButton
+            position="absolute"
+            top="2"
+            right="2"
+            size="sm"
+            bg="blackAlpha.600"
+            borderRadius={"50%"}
+            color="white"
+            _hover={{ bg: "blackAlpha.800" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              removeMovie(movie.id);
+            }}
+          />
+        )}
         {/* Movie Poster */}
         <Image
           src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/images/${movie.thumbnail}`}

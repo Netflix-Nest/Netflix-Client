@@ -168,4 +168,14 @@ export const engagementApi = {
     );
     return res.data;
   },
+  removeMoviesFromWatchlist: async (
+    listId: string,
+    ids: number[]
+  ): Promise<IBackendRes<any>> => {
+    const res = await axios.patch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/update-watchlist`,
+      { listId, ids }
+    );
+    return res.data;
+  },
 };
