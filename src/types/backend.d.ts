@@ -28,4 +28,9 @@ declare global {
     };
     data: T[];
   }
+  interface IResponseServerWithoutAction<T> {
+    success: boolean;
+    data?: T;
+    message: string;
+  }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, Portal, Grid } from "@chakra-ui/react";
-import { CommentClient, Content } from "@netflix-clone/types";
-import { movieApi } from "@/utils/api";
+import { CommentClient, Content, Watchlist } from "@netflix-clone/types";
+import { engagementApi, movieApi } from "@/utils/api";
 
 import HeroSectionModal from "./hero.section";
 import LeftContent from "./left.content";
@@ -20,6 +20,17 @@ const NetflixMovieDialog = ({
   setIsOpen: (e) => void;
   isVideoLoaded: boolean;
 }) => {
+  const [watchlist, setWatchlist] = useState<Watchlist[]>([]);
+  useEffect(() => {
+    const getAndSetWatchlists = async () => {
+      const res = await engagementApi.getWatchlists();
+      if (res.data) {
+        setWatchlist(res.data);
+      } else {
+      }
+    };
+    getAndSetWatchlists();
+  }, []);
   return (
     <Dialog.Root
       motionPreset="slide-in-bottom"
@@ -36,7 +47,11 @@ const NetflixMovieDialog = ({
             borderRadius="xl"
             overflow="visible"
             maxH="90vh">
-            <HeroSectionModal isVideoLoaded={isVideoLoaded} movie={movie} />
+            <HeroSectionModal
+              isVideoLoaded={isVideoLoaded}
+              movie={movie}
+              watchlist={watchlist}
+            />
 
             <Dialog.Body px={6} py={6}>
               <Grid templateColumns="2fr 1fr" gap={8}>

@@ -32,7 +32,7 @@ import {
 import { Content, Watchlist } from "@netflix-clone/types";
 import MovieCard from "../slider/movie.card";
 import { toaster } from "../ui/toaster";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FcCancel } from "react-icons/fc";
 import { IoIosSave } from "react-icons/io";
 import { MdOutlineCancelPresentation } from "react-icons/md";
@@ -78,7 +78,7 @@ export const WatchListDetail = ({
       : 0;
   const handleSave = async () => {
     setDisable(true);
-    const res = await engagementApi.removeMoviesFromWatchlist(
+    const res = await engagementApi.editMoviesFromWatchlist(
       watchlist.id.toString(),
       moviesState.map((m) => m.id)
     );

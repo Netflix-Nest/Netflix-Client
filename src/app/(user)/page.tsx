@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/auth.options";
 import { Content } from "@netflix-clone/types";
 import { COMMON_ERROR } from "@/constants/response.message";
+import { FastToaster } from "@/lib/toaster.noti";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -11,7 +12,7 @@ export default async function HomePage() {
   // hero content
   const resHero = await movieApi.getHero();
   if (!resHero || !resHero.data) {
-    throw new Error(COMMON_ERROR);
+    FastToaster("error", "Đã xảy ra lỗi!");
   }
   let excludeContents: number[] = [resHero.data?.id!];
 
@@ -24,7 +25,7 @@ export default async function HomePage() {
     "DESC"
   );
   if (!resMostView || !resMostView.data) {
-    throw new Error(COMMON_ERROR);
+    FastToaster("error", "Đã xảy ra lỗi!");
   }
   excludeContents.push(...resMostView.data.map((d) => d.id));
 
@@ -38,14 +39,14 @@ export default async function HomePage() {
     { year: 2025 }
   );
   if (!resThisYear || !resThisYear.data) {
-    throw new Error(COMMON_ERROR);
+    FastToaster("error", "Đã xảy ra lỗi!");
   }
   excludeContents.push(...resThisYear.data.map((d) => d.id));
 
   // recommendation
   const forYou = await movieApi.getContents(1, 12, excludeContents);
   if (!forYou || !forYou.data) {
-    throw new Error(COMMON_ERROR);
+    FastToaster("error", "Đã xảy ra lỗi!");
   }
   return (
     <NetflixHomepage

@@ -21,6 +21,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { movieApi, userApi } from "@/utils/api";
 import { COMMON_ERROR } from "@/constants/response.message";
+import { FastToaster } from "@/lib/toaster.noti";
 
 export default function CommentSection({
   movie,
@@ -135,13 +136,13 @@ export default function CommentSection({
       try {
         console.log("Submitting comment:", newComment);
         if (!session?.user.id) {
-          throw new Error(COMMON_ERROR);
+          FastToaster("error", "Đã xảy ra lỗi!");
         }
         const createCommentDto: CreateCommentDto = {
           content: newComment,
           contentId: movie.id,
-          userId: session?.user.id,
-          fullName: session.user.fullName,
+          userId: session?.user.id!,
+          fullName: session?.user.fullName!,
         };
         if (replyingTo) {
           createCommentDto.parentId = replyingTo;
@@ -164,9 +165,9 @@ export default function CommentSection({
           contentId: movie.id,
           mentions: [],
           parentId: replyingTo,
-          userId: session.user.id,
+          userId: session?.user.id!,
           replies: [],
-          fullName: session.user.fullName,
+          fullName: session?.user.fullName!,
           createdAt: "30-04-1975" as unknown as Date,
           updatedAt: "30-04-1975" as unknown as Date,
         };

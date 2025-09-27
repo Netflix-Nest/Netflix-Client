@@ -168,13 +168,24 @@ export const engagementApi = {
     );
     return res.data;
   },
-  removeMoviesFromWatchlist: async (
+  editMoviesFromWatchlist: async (
     listId: string,
     ids: number[]
   ): Promise<IBackendRes<any>> => {
     const res = await axios.patch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/update-watchlist`,
       { listId, ids }
+    );
+    return res.data;
+  },
+  changeExistenceVideoInWatchlists: async (
+    watchlistIds: number[],
+    contentId: number,
+    add: boolean
+  ): Promise<IBackendRes<IResponseServerWithoutAction<any>>> => {
+    const res = await axios.patch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/change-exist`,
+      { watchlistIds, contentId, add }
     );
     return res.data;
   },
