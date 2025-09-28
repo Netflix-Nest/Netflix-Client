@@ -24,10 +24,12 @@ const MovieCard = ({
   movie,
   isEdit = false,
   removeMovie,
+  disableDialog = false,
 }: {
   movie: Content;
   isEdit: boolean;
   removeMovie: (v: number) => void;
+  disableDialog?: boolean;
 }) => {
   const cardWidth = useBreakpointValue({
     base: "200px",
@@ -109,12 +111,14 @@ const MovieCard = ({
           </VStack>
         </Box>
       </Box>
-      <NetflixMovieDialog
-        movie={movie}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        isVideoLoaded={isVideoLoaded}
-      />
+      {!disableDialog && (
+        <NetflixMovieDialog
+          movie={movie}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          isVideoLoaded={isVideoLoaded}
+        />
+      )}
     </>
   );
 };

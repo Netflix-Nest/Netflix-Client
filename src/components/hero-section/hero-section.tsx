@@ -123,7 +123,7 @@ const HeroSection = ({ movieData }: { movieData: Content }) => {
                 console.log("Video error:", e);
               }}>
               <source
-                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/videos/${movieData.trailer}`}
+                src={`/api/media/videos/${movieData.trailer}`}
                 type="video/mp4"
               />
               Your browser does not support the video tag.

@@ -1,9 +1,11 @@
 import {
+  Bookmark,
   Comment,
   CommentClient,
   Content,
   CreateCommentDto,
   CreateWatchlistDto,
+  History,
   UserMention,
   UserProfile,
   Watchlist,
@@ -104,6 +106,13 @@ export const movieApi = {
     );
     return res.data.data;
   },
+  findVideoByIds: async (ids: number[]) => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/video/by-ids`,
+      { ids }
+    );
+    return res.data;
+  },
 };
 
 export const userApi = {
@@ -186,6 +195,24 @@ export const engagementApi = {
     const res = await axios.patch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/change-exist`,
       { watchlistIds, contentId, add }
+    );
+    return res.data;
+  },
+  getHistory: async (): Promise<IModelPaginate<History>> => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/history`
+    );
+    return res.data;
+  },
+  getBookmarks: async (): Promise<IModelPaginate<Bookmark>> => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/bookmark`
+    );
+    return res.data;
+  },
+  deleteBookmark: async (id: number) => {
+    const res = await axios.delete(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/bookmark/${id}`
     );
     return res.data;
   },

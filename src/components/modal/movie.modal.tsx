@@ -24,6 +24,7 @@ const NetflixMovieDialog = ({
   useEffect(() => {
     const getAndSetWatchlists = async () => {
       const res = await engagementApi.getWatchlists();
+      console.log("cal wwatchlist......");
       if (res.data) {
         setWatchlist(res.data);
       } else {

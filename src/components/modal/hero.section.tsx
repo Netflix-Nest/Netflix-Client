@@ -100,7 +100,7 @@ export default function HeroSectionModal({
                   console.log("Video error:", e);
                 }}>
                 <source
-                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/videos/${movie.trailer}`}
+                  src={`/api/media/videos/${movie.trailer}`}
                   type="video/mp4"
                 />
                 Your browser does not support the video tag.

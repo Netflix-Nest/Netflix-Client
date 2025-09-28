@@ -21,7 +21,7 @@ import { RiReplay10Fill } from "react-icons/ri";
 import { RiForward10Fill } from "react-icons/ri";
 import "../css/global.css";
 import SkipIntro from "./skip.introduction";
-import ProgressBarVideo from "./progress.bar";
+import ProgressBarVideo from "./progress.bar.video";
 import CenterPlayButton from "../share/play.center";
 import BackButton from "../share/button.back";
 import Spinner from "../share/spinner";
@@ -30,10 +30,13 @@ import ButtonControl from "../share/button.control";
 
 interface VideoPlayerProps {
   fileName: string;
+  firstSeek?: number;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ fileName }) => {
-  const router = useRouter();
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  fileName,
+  firstSeek = 0,
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -78,9 +81,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ fileName }) => {
       }
     }
   };
-  useEffect(() => {}, [isFullscreen]);
 
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/media/videos/${fileName}`;
+  useEffect(() => {}, [isFullscreen]);
+  useEffect(() => {
+    if (firstSeek && firstSeek !== 0) {
+      videoRef.current!.currentTime = firstSeek;
+    }
+  }, []);
+  const url = `/api/media/videos/${fileName}`;
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;

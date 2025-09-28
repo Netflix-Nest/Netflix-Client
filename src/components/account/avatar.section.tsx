@@ -5,7 +5,7 @@ import { FaCamera, FaSave, FaTimes } from "react-icons/fa";
 import { toaster } from "../ui/toaster";
 import { UserProfile } from "@netflix-clone/types";
 import { useFormStatus } from "react-dom";
-import { uploadAvatarAction } from "@/lib/avatar.actions";
+import { uploadAvatarAction } from "@/lib/server-action/avatar.actions";
 import { signIn, useSession } from "next-auth/react";
 import unstable_update from "next-auth";
 import { authOptions } from "@/app/api/auth/auth.options";
