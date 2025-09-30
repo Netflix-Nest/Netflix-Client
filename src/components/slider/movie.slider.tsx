@@ -93,7 +93,7 @@ const MovieSlider = ({
           }}>
           {movies.map((movie, index) => (
             <SwiperSlide key={movie.id}>
-              <MovieCard movie={movie} />
+              <MovieCard movie={movie} removeMovie={() => {}} />
             </SwiperSlide>
           ))}
         </Swiper>

@@ -27,7 +27,7 @@ const MovieCard = ({
   disableDialog = false,
 }: {
   movie: Content;
-  isEdit: boolean;
+  isEdit?: boolean;
   removeMovie: (v: number) => void;
   disableDialog?: boolean;
 }) => {

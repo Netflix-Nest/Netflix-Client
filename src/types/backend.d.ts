@@ -33,4 +33,14 @@ declare global {
     data?: T;
     message: string;
   }
+
+  interface IResponseSearch {
+    data: {
+      total: number;
+      page: number;
+      pageSize: number;
+      results: Content[];
+    };
+    timestamp: Date;
+  }
 }

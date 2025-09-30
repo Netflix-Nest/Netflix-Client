@@ -7,5 +7,7 @@ modal movie: handle video in any user's watchlist -> thumbups/thumbups outline
 handle true session: access_token, refresh_token, access_expire
 
 video player: add btn add bookmark
+watchlist: handle upload thumbnail, history: handle delete movie
 load comment when user scroll, at /, it call a lot of api watchlist due to render movie card
 stream video: url is encoded/decoded incorrect -> video not found.
+handle err page, SEO file.

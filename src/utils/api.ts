@@ -6,6 +6,8 @@ import {
   CreateCommentDto,
   CreateWatchlistDto,
   History,
+  SearchMoviesDto,
+  SuggestDto,
   UserMention,
   UserProfile,
   Watchlist,
@@ -215,5 +217,22 @@ export const engagementApi = {
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/engagement/bookmark/${id}`
     );
     return res.data;
+  },
+};
+
+export const searchApi = {
+  searchMovie: async (searchDto: SearchMoviesDto): Promise<IResponseSearch> => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/search/search-movies`,
+      searchDto
+    );
+    return res.data;
+  },
+  suggestMovie: async (prefix: string, size?: number) => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/search/suggest`,
+      { prefix, size }
+    );
+    return res.data.data;
   },
 };
